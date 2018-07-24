@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script type="text/javascript" src="/plugins/jquery-3.3.1.js"></script>
+    <script src="/plugins/dropzone.js"></script>
+    <title>本地图床</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        #main {
+            /* position: relative; */
+            -webkit-column-width: 50%;
+            -moz-column-width: 50%;
+            column-width: 50%;
+        }
+        
+        .box {
+            padding: 5px 5px 5px 5px;
+            float: left;
+            /* border: 1px solid #dddddd; */
+        }
+        
+        .box img {
+            max-width: 150px;
+            padding: 10px;
+        }
+        
+        @media screen and (max-width:900px) {
+            .item {
+                width: 100%!important;
+            }
+        }
+        
+        #bottom-float-box {
+            font-size: 20px;
+            color: white;
+            text-align: center;
+            line-height: 40px;
+            position: fixed;
+            height: 40px;
+            bottom: 0px;
+            right: 0px;
+            left: 0px;
+            background: dodgerblue;
+        }
+        
+        #img-file-input {
+            opacity: 0;
+            position: fixed;
+            bottom: 0px;
+            right: 0px;
+            left: 0px;
+            height: 40px;
+        }
+    </style>
+    </style>
+</head>
+
+<body>
+    <div id="main"></div>
+    <div id="bottom-float-box">
+        添加图片
+    </div>
+    <script>
+        $("#bottom-float-box").dropzone({
+            url: "/file_upload",
+            paramName: 'file',
+            acceptedFiles: 'image/*',
+            uploadMultiple: false,
+            success: function(file, response, e) {
+                refreshFiles()
+            },
+            fallback: function() {
+                console.log('该浏览器不支持上传')
+            }
+        });
+
+        function refreshFiles() {
+            $.ajax({
+                url: '/files/',
+                contentType: false,
+                processData: false,
+                success: function(data) {
+                    var imgs = []
+                    for (var img of data) {
+                        imgs.push('<div class="box"><a href="' + img + '"><img src="' + img + '"></div>')
+                    }
+                    console.log(imgs.join(''))
+                    document.getElementById("main").innerHTML = imgs.join('')
+                }
+            })
+        }
+        refreshFiles()
+    </script>
+</body>
+
+</html>
